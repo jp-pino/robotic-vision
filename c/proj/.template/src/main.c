@@ -90,7 +90,7 @@ void openfiles ()
      {
        printf(" Cannot open input image file: %s\n",infile);
        printf(" Exiting program...\n");
-       exit(1);
+       exit(0);
        }
 
      printf(" Enter name of *.pgm OUTPUT image file (example: lenaout.pgm) ");
@@ -101,7 +101,7 @@ void openfiles ()
      {
        printf(" Cannot create output image file: %s\n",outfile);
        printf(" Exiting program...\n");
-       exit(1);
+       exit(0);
        }
 
      // If this point is reached, file are OK

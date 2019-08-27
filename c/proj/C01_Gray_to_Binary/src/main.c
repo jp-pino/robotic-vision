@@ -21,10 +21,11 @@ void closefiles (void);   /* Close all files used in program */
 //         Include declarations                                               //
 //----------------------------------------------------------------------------//
 
-# include <stdio.h>
-# include <math.h>
-# include <stdlib.h>
-# include <string.h>
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+#include "gray2bin.h"
 
 //----------------------------------------------------------------------------//
 //         Variable declarations                                              //
@@ -55,8 +56,7 @@ int main ()
      closefiles ();
 
      printf("\n Bye! Bye!\n");
-     system("PAUSE");
-     return(1);
+     return(0);
 } // end main ();
 
 //----------------------------------------------------------------------------//
@@ -84,27 +84,25 @@ void openfiles ()
 {
      printf("\n Opening Input and Output image files\n");
      printf(" Enter name of *.pgm INPUT image file (example: lena.pgm) ");
-     scanf("%s",&infile);
+     scanf("%s",infile);
 
      //Check if input file exists
      if ((infptr = fopen(infile, "rb")) == NULL)
      {
        printf(" Cannot open input image file: %s\n",infile);
        printf(" Exiting program...\n");
-       system("PAUSE");
-       exit(1);
+       exit(0);
        }
 
      printf(" Enter name of *.pgm OUTPUT image file (example: lenaout.pgm) ");
-     scanf("%s",&outfile);
+     scanf("%s",outfile);
 
      //Check if output file was created succesfully
      if ((outfptr = fopen(outfile, "wb")) == NULL)
      {
        printf(" Cannot create output image file: %s\n",outfile);
        printf(" Exiting program...\n");
-       system("PAUSE");
-       exit(1);
+       exit(0);
        }
 
      // If this point is reached, file are OK
@@ -137,7 +135,6 @@ void readhdr ()
      else
      {
        printf("\n Input file is NOT pgm, Exiting program...\n");
-       system("PAUSE");
        exit(0);
      }
 
@@ -164,22 +161,7 @@ void addhdr ()
 
 void userdefined ()
 {
-	unsigned char Pixel; // Pixels are 8-bits in size and are all positive
-
-	//Read all pixel in image and convert them into binary
-	Pixel = fgetc(infptr);
-	do {
-		// Binarize
-		if (Pixel > 127) {
-			Pixel = 255;
-		} else {
-			Pixel = 0;
-		}
-		// Store
-		fputc(Pixel, outfptr);
-		// Read Next
-		Pixel = fgetc(infptr);
-	} while (!feof(infptr));
+	gray2bin(infptr, outfptr, 127);
 }  // end userdefined ()
 
 //----------------------------------------------------------------------------//

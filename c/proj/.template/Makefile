@@ -55,7 +55,8 @@ include ${ROOT}/common.mk
 # Where to find header files that do not live in the source directory.
 #
 IPATH = \
-	${ROOT}/inc		          \
+	${ROOT}/lib/gray2bin/inc\
+	${ROOT}/lib		          \
 	$/inc           				\
 
 #
@@ -67,6 +68,7 @@ all: ${BUILDPATH}/$(TARGET)
 # *****************************************************************************
 # Add object files you need below
 # *****************************************************************************
+${BUILDPATH}/$(TARGET): ${ROOT}/lib/gray2bin/src/gray2bin.o
 ${BUILDPATH}/$(TARGET): src/main.o
 # *****************************************************************************
 

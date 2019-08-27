@@ -63,8 +63,8 @@ CFLAGS+=${patsubst %,-I%,${subst :, ,${IPATH}}}
 ${BUILDPATH}/${TARGET}:
 	@mkdir -p ${BUILDPATH}
 	@echo "  MAKE"
-	@echo ${CC} -o ${@} ${<} $(CFLAGS)
-	@${CC} -o ${@} ${<} $(CFLAGS)
+	@echo ${CC} -o ${@} ${^} $(CFLAGS)
+	@${CC} -o ${@} ${^} $(CFLAGS)
 
 
 
