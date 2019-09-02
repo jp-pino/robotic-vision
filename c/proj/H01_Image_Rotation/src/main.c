@@ -95,7 +95,7 @@ void openfiles ()
        exit(0);
        }
 
-     printf(" Enter name of *.pgm OUTPUT image file (example: lenaout.pgm) ");
+     printf(" Enter name of *.pgm OUTPUT image file (example: lenaout.ppm) ");
 		 strcpy(outfile, "out/");
      scanf("%s",(outfile + 4));
 
@@ -132,11 +132,11 @@ void readhdr ()
      } while (c != '\n');
 
      //Check if file is P5 (pgm) format
-     if (buffer[1] == '5')
-       printf("\n Input file is pgm, OK\n");
+     if (buffer[1] == '6')
+       printf("\n Input file is ppm, OK\n");
      else
      {
-       printf("\n Input file is NOT pgm, Exiting program...\n");
+       printf("\n Input file is NOT ppm, Exiting program...\n");
        exit(0);
      }
 
@@ -154,15 +154,48 @@ void readhdr ()
 
 void addhdr ()
 {
-     fprintf(outfptr, "P5\n%d %d\n%d\n",NCols,MRows,255);
+     fprintf(outfptr, "P6\n%d %d\n%d\n",NCols,MRows,255);
 } //addhdr ()
 
 //----------------------------------------------------------------------------//
 //         User defined section                                               //
 //----------------------------------------------------------------------------//
 
+void rotate_image(int rows, int cols, FILE *in, FILE *out) {
+	unsigned char inbuffer[rows][cols][3];
+	unsigned char outbuffer[cols][rows][3];
+
+	// Read buffer
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			for (int k = 0; k < 3; k++) {
+				inbuffer[i][j][k] = fgetc(in);
+			}
+		}
+	}
+
+	// Rotate
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			for (int k = 0; k < 3; k++) {
+				outbuffer[cols-j][i][k] = inbuffer[i][j][k];
+			}
+		}
+	}
+
+	// Save to file
+	for (int i = 0; i < cols; i++) {
+		for (int j = 0; j < rows; j++) {
+			for (int k = 0; k < 3; k++) {
+				 fputc(outbuffer[i][j][k], out);
+			}
+		}
+	}
+}
+
 void userdefined ()
 {
+	rotate_image(MRows, NCols, infptr, outfptr);
 }  // end userdefined ()
 
 //----------------------------------------------------------------------------//

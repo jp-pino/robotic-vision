@@ -21,10 +21,11 @@ void closefiles (void);   /* Close all files used in program */
 //         Include declarations                                               //
 //----------------------------------------------------------------------------//
 
-# include <stdio.h>
-# include <math.h>
-# include <stdlib.h>
-# include <string.h>
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+#include "rgb2gray.h"
 
 //----------------------------------------------------------------------------//
 //         Variable declarations                                              //
@@ -81,9 +82,9 @@ void heading ()
 
 void openfiles ()
 {
+		 strcpy(infile, "img/");
      printf("\n Opening Input and Output image files\n");
      printf(" Enter name of *.pgm INPUT image file (example: lena.ppm) ");
-		 strcpy(infile, "img/");
      scanf("%s",(infile + 4));
 
 
@@ -93,10 +94,10 @@ void openfiles ()
        printf(" Cannot open input image file: %s\n",infile);
        printf(" Exiting program...\n");
        exit(0);
-       }
+     }
 
-     printf(" Enter name of *.pgm OUTPUT image file (example: lenaout.pgm) ");
 		 strcpy(outfile, "out/");
+     printf(" Enter name of *.pgm OUTPUT image file (example: lenaout.pgm) ");
      scanf("%s",(outfile + 4));
 
      //Check if output file was created succesfully
@@ -105,7 +106,7 @@ void openfiles ()
        printf(" Cannot create output image file: %s\n",outfile);
        printf(" Exiting program...\n");
        exit(0);
-       }
+     }
 
      // If this point is reached, file are OK
      printf(" File opened and created OK! \n\n");
@@ -131,12 +132,12 @@ void readhdr ()
        i++;
      } while (c != '\n');
 
-     //Check if file is P5 (pgm) format
-     if (buffer[1] == '5')
-       printf("\n Input file is pgm, OK\n");
+     //Check if file is P6 (ppm) format
+     if (buffer[1] == '6')
+       printf("\n Input file is ppm, OK\n");
      else
      {
-       printf("\n Input file is NOT pgm, Exiting program...\n");
+       printf("\n Input file is NOT ppm, Exiting program...\n");
        exit(0);
      }
 
@@ -163,6 +164,7 @@ void addhdr ()
 
 void userdefined ()
 {
+	rgb2gray(infptr, outfptr, 1, 5, 1);
 }  // end userdefined ()
 
 //----------------------------------------------------------------------------//

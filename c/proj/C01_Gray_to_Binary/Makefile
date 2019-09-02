@@ -55,9 +55,11 @@ include ${ROOT}/common.mk
 # Where to find header files that do not live in the source directory.
 #
 IPATH = \
-	${ROOT}/lib/gray2bin/inc\
-	${ROOT}/lib		          \
-	$/inc           				\
+	${ROOT}/lib/gray2bin/inc			\
+	${ROOT}/lib/gray2negative/inc	\
+	${ROOT}/lib/rgb2gray/inc			\
+	${ROOT}/lib		          			\
+	$/inc           							\
 
 #
 # The default rule
@@ -69,6 +71,8 @@ all: ${BUILDPATH}/$(TARGET)
 # Add object files you need below
 # *****************************************************************************
 ${BUILDPATH}/$(TARGET): ${ROOT}/lib/gray2bin/src/gray2bin.o
+${BUILDPATH}/$(TARGET): ${ROOT}/lib/gray2negative/src/gray2negative.o
+${BUILDPATH}/$(TARGET): ${ROOT}/lib/rgb2gray/src/rgb2gray.o
 ${BUILDPATH}/$(TARGET): src/main.o
 # *****************************************************************************
 

@@ -82,10 +82,8 @@ void heading ()
 void openfiles ()
 {
      printf("\n Opening Input and Output image files\n");
-     printf(" Enter name of *.pgm INPUT image file (example: lena.ppm) ");
-		 strcpy(infile, "img/");
-     scanf("%s",(infile + 4));
-
+     printf(" Enter name of *.pgm INPUT image file (example: lena.pgm) ");
+     scanf("%s",infile);
 
      //Check if input file exists
      if ((infptr = fopen(infile, "rb")) == NULL)
@@ -96,8 +94,7 @@ void openfiles ()
        }
 
      printf(" Enter name of *.pgm OUTPUT image file (example: lenaout.pgm) ");
-		 strcpy(outfile, "out/");
-     scanf("%s",(outfile + 4));
+     scanf("%s",outfile);
 
      //Check if output file was created succesfully
      if ((outfptr = fopen(outfile, "wb")) == NULL)
@@ -163,6 +160,20 @@ void addhdr ()
 
 void userdefined ()
 {
+	// Define local variables
+	unsigned char Pixel;
+
+	// Read the first Pixel
+	Pixel = fgetc(infptr);
+
+	do {
+		// Negate pixel
+		Pixel = ~Pixel;
+
+		fputc(Pixel, outfptr);
+		Pixel = fgetc(infptr);
+	} while (!feof(infptr));
+
 }  // end userdefined ()
 
 //----------------------------------------------------------------------------//

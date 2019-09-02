@@ -75,6 +75,12 @@ run:
 	@./${BUILDPATH}/${TARGET}
 
 #
+# The rule for showing results.
+#
+show:
+	@open ./out/.
+
+#
 # Debug depends on the axf, but if we put the dependency as axf here, it
 # runs into an infinite loop for checking the existence of axf file from
 # make all. Since bin file and axf file are created at the same time, we
