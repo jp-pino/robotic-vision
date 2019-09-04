@@ -154,15 +154,48 @@ void readhdr ()
 
 void addhdr ()
 {
-     fprintf(outfptr, "P6\n%d %d\n%d\n",NCols/2,MRows/2,MaxRGB);
+     fprintf(outfptr, "P6\n%d %d\n%d\n",NCols*2,MRows*2,MaxRGB);
 } //addhdr ()
 
 //----------------------------------------------------------------------------//
 //         User defined section                                               //
 //----------------------------------------------------------------------------//
 
+void scale_up(int rows, int cols, FILE *in, FILE *out) {
+	unsigned char inbuffer[rows][cols][3];
+	unsigned char outbuffer[rows*2][cols*2][3];
+
+	// Read buffer
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			for (int k = 0; k < 3; k++) {
+				inbuffer[i][j][k] = fgetc(in);
+			}
+		}
+	}
+
+	// Scale up
+	for (int i = 0; i < rows*2; i++) {
+		for (int j = 0; j < cols*2; j++) {
+			for (int k = 0; k < 3; k++) {
+				outbuffer[i][j][k] = inbuffer[i/2][j/2][k];
+			}
+		}
+	}
+
+	// Save to file
+	for (int i = 0; i < cols*2; i++) {
+		for (int j = 0; j < rows*2; j++) {
+			for (int k = 0; k < 3; k++) {
+				 fputc(outbuffer[i][j][k], out);
+			}
+		}
+	}
+}
+
 void userdefined ()
 {
+	scale_up(MRows, NCols, infptr, outfptr);
 }  // end userdefined ()
 
 //----------------------------------------------------------------------------//

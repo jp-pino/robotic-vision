@@ -30,7 +30,7 @@ void closefiles (void);   /* Close all files used in program */
 //         Variable declarations                                              //
 //----------------------------------------------------------------------------//
 
-int    MRows, NCols, MaxRGB;         /* Number of Rows and columns in image */
+int    MRows, NCols;                 /* Number of Rows and columns in image */
 FILE   *infptr, *outfptr, *outfptrh; /* Input and output file pointers */
 char   infile[40];                   /* Name of input file */
 char   outfile[40];                  /* Name of output file */
@@ -82,7 +82,7 @@ void heading ()
 void openfiles ()
 {
      printf("\n Opening Input and Output image files\n");
-     printf(" Enter name of *.pgm INPUT image file (example: lena.ppm) ");
+     printf(" Enter name of *.pgm INPUT image file (example: lena.pgm) ");
 		 strcpy(infile, "img/");
      scanf("%s",(infile + 4));
 
@@ -95,7 +95,7 @@ void openfiles ()
        exit(0);
        }
 
-     printf(" Enter name of *.pgm OUTPUT image file (example: lenaout.pgm) ");
+     printf(" Enter name of *.pgm OUTPUT image file (example: lenaout.ppm) ");
 		 strcpy(outfile, "out/");
      scanf("%s",(outfile + 4));
 
@@ -118,7 +118,7 @@ void openfiles ()
 
 void readhdr ()
 {
-     int   i=0;
+     int   i=0, MaxRGB;
      char  c, buffer[128];
 
      //Read header of PGM file
@@ -132,11 +132,11 @@ void readhdr ()
      } while (c != '\n');
 
      //Check if file is P5 (pgm) format
-     if (buffer[1] == '6')
-       printf("\n Input file is ppm, OK\n");
+     if (buffer[1] == '5')
+       printf("\n Input file is pgm, OK\n");
      else
      {
-       printf("\n Input file is NOT ppm, Exiting program...\n");
+       printf("\n Input file is NOT pgm, Exiting program...\n");
        exit(0);
      }
 
@@ -154,15 +154,42 @@ void readhdr ()
 
 void addhdr ()
 {
-     fprintf(outfptr, "P6\n%d %d\n%d\n",NCols/2,MRows/2,MaxRGB);
+     fprintf(outfptr, "P5\n%d %d\n%d\n",NCols,MRows,255);
 } //addhdr ()
 
 //----------------------------------------------------------------------------//
 //         User defined section                                               //
 //----------------------------------------------------------------------------//
 
+void rotate_image(int rows, int cols, FILE *in, FILE *out) {
+	unsigned char inbuffer[rows][cols];
+	unsigned char outbuffer[cols][rows];
+
+	// Read buffer
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			inbuffer[i][j] = fgetc(in);
+		}
+	}
+
+	// Rotate
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			outbuffer[cols-j][i] = inbuffer[i][j];
+		}
+	}
+
+	// Save to file
+	for (int i = 0; i < cols; i++) {
+		for (int j = 0; j < rows; j++) {
+			 fputc(outbuffer[i][j], out);
+		}
+	}
+}
+
 void userdefined ()
 {
+	rotate_image(MRows, NCols, infptr, outfptr);
 }  // end userdefined ()
 
 //----------------------------------------------------------------------------//

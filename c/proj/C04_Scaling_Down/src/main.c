@@ -30,7 +30,7 @@ void closefiles (void);   /* Close all files used in program */
 //         Variable declarations                                              //
 //----------------------------------------------------------------------------//
 
-int    MRows, NCols, MaxRGB;         /* Number of Rows and columns in image */
+int    MRows, NCols, MaxRGB;                 /* Number of Rows and columns in image */
 FILE   *infptr, *outfptr, *outfptrh; /* Input and output file pointers */
 char   infile[40];                   /* Name of input file */
 char   outfile[40];                  /* Name of output file */
@@ -161,8 +161,50 @@ void addhdr ()
 //         User defined section                                               //
 //----------------------------------------------------------------------------//
 
+void scale_down(int rows, int cols, FILE *in, FILE *out) {
+	unsigned char inbuffer[rows][cols][3];
+	unsigned char outbuffer[rows/2][cols/2][3];
+
+	// Read buffer
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			for (int k = 0; k < 3; k++) {
+				inbuffer[i][j][k] = fgetc(in);
+			}
+		}
+	}
+
+	// Scale down (averaging neighbors)
+	for (int i = 0; i < rows/2; i++) {
+		for (int j = 0; j < cols/2; j++) {
+			for (int k = 0; k < 3; k++) {
+				outbuffer[i][j][k] = inbuffer[i*2][j*2][k]/4 + inbuffer[i*2 + 1][j*2][k]/4 + inbuffer[i*2][j*2 + 1][k]/4 + inbuffer[i*2 + 1][j*2 + 1][k]/4;
+			}
+		}
+	}
+
+	// Scale down (skipping)
+	// for (int i = 0; i < rows/2; i++) {
+	// 	for (int j = 0; j < cols/2; j++) {
+	// 		for (int k = 0; k < 3; k++) {
+	// 			outbuffer[i][j][k] = inbuffer[i*2][j*2][k];
+	// 		}
+	// 	}
+	// }
+
+	// Save to file
+	for (int i = 0; i < cols/2; i++) {
+		for (int j = 0; j < rows/2; j++) {
+			for (int k = 0; k < 3; k++) {
+				 fputc(outbuffer[i][j][k], out);
+			}
+		}
+	}
+}
+
 void userdefined ()
 {
+	scale_down(MRows, NCols, infptr, outfptr);
 }  // end userdefined ()
 
 //----------------------------------------------------------------------------//
