@@ -82,7 +82,7 @@ void heading ()
 void openfiles ()
 {
      printf("\n Opening Input and Output image files\n");
-     printf(" Enter name of *.pgm INPUT image file (example: lena.ppm) ");
+     printf(" Enter name of *.pgm INPUT image file (example: lena.pgm) ");
 		 strcpy(infile, "img/");
      scanf("%s",(infile + 4));
 
@@ -132,11 +132,11 @@ void readhdr ()
      } while (c != '\n');
 
      //Check if file is P5 (pgm) format
-     if (buffer[1] == '6')
-       printf("\n Input file is ppm, OK\n");
+     if (buffer[1] == '5')
+       printf("\n Input file is pgm, OK\n");
      else
      {
-       printf("\n Input file is NOT ppm, Exiting program...\n");
+       printf("\n Input file is NOT pgm, Exiting program...\n");
        exit(0);
      }
 
@@ -154,15 +154,49 @@ void readhdr ()
 
 void addhdr ()
 {
-     fprintf(outfptr, "P6\n%d %d\n%d\n",NCols,MRows,MaxRGB);
+     fprintf(outfptr, "P5\n%d %d\n%d\n",NCols,MRows,MaxRGB);
 } //addhdr ()
 
 //----------------------------------------------------------------------------//
 //         User defined section                                               //
 //----------------------------------------------------------------------------//
+void scale_down(int rows, int cols, int depth, FILE *in, FILE *out) {
+	unsigned char inbuffer[rows][cols];
+	unsigned char outbuffer[rows][cols];
+	unsigned char min = 0, max = 0;
+	float factor;
+
+	// Read buffer
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			inbuffer[i][j] = fgetc(in);
+			if (min > inbuffer[i][j])
+				min = inbuffer[i][j];
+			if (max < inbuffer[i][j])
+				max = inbuffer[i][j];
+		}
+	}
+
+	// Subtract min from all pixels
+	// Stretch by multiplying by a factor
+	factor = (float)depth/((float)max-(float)min);
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			outbuffer[i][j] = (unsigned char)((inbuffer[i][j] - min) * factor);
+		}
+	}
+
+	// Save to file
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			 fputc(outbuffer[i][j], out);
+		}
+	}
+}
 
 void userdefined ()
 {
+	scale_down(MRows, NCols, MaxRGB, infptr, outfptr);
 }  // end userdefined ()
 
 //----------------------------------------------------------------------------//

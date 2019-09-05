@@ -82,7 +82,7 @@ void heading ()
 void openfiles ()
 {
      printf("\n Opening Input and Output image files\n");
-     printf(" Enter name of *.pgm INPUT image file (example: lena.ppm) ");
+     printf(" Enter name of *.pgm INPUT image file (example: lena.pgm) ");
 		 strcpy(infile, "img/");
      scanf("%s",(infile + 4));
 
@@ -95,14 +95,14 @@ void openfiles ()
        exit(0);
        }
 
-     printf(" Enter name of *.pgm OUTPUT image file (example: lenaout.pgm) ");
+     printf(" Enter name of *.csv OUTPUT image file (example: lenaout.csv) ");
 		 strcpy(outfile, "out/");
      scanf("%s",(outfile + 4));
 
      //Check if output file was created succesfully
      if ((outfptr = fopen(outfile, "wb")) == NULL)
      {
-       printf(" Cannot create output image file: %s\n",outfile);
+       printf(" Cannot create csv file: %s\n",outfile);
        printf(" Exiting program...\n");
        exit(0);
        }
@@ -132,11 +132,11 @@ void readhdr ()
      } while (c != '\n');
 
      //Check if file is P5 (pgm) format
-     if (buffer[1] == '6')
-       printf("\n Input file is ppm, OK\n");
+     if (buffer[1] == '5')
+       printf("\n Input file is pgm, OK\n");
      else
      {
-       printf("\n Input file is NOT ppm, Exiting program...\n");
+       printf("\n Input file is NOT pgm, Exiting program...\n");
        exit(0);
      }
 
@@ -154,15 +154,34 @@ void readhdr ()
 
 void addhdr ()
 {
-     fprintf(outfptr, "P6\n%d %d\n%d\n",NCols,MRows,MaxRGB);
+ 	fprintf(outfptr, "\"Pixel\",\"Count\"\n");
 } //addhdr ()
 
 //----------------------------------------------------------------------------//
 //         User defined section                                               //
 //----------------------------------------------------------------------------//
 
+void histogram(int rows, int cols, int depth, FILE *in, FILE *out) {
+	unsigned int histogram[depth];
+
+	// Initialize
+	for (int i = 0; i < depth; i++) {
+		histogram[i]= 0;
+	}
+	// Count
+	for (int i = 0; i < rows*cols; i++) {
+		histogram[fgetc(in)]++;
+	}
+
+	// Save to file
+	for (int i = 0; i < depth; i++) {
+     fprintf(out, "%d,%d\n",i,histogram[i]);
+	}
+}
+
 void userdefined ()
 {
+	histogram(MRows, NCols, MaxRGB, infptr, outfptr);
 }  // end userdefined ()
 
 //----------------------------------------------------------------------------//
